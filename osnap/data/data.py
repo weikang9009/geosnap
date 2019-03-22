@@ -79,7 +79,7 @@ db = Bunch(census_90=census.variables_1990(),
 # LTDB importer
 
 
-def read_ltdb(sample, fullcount):
+def read_ltdb(sample, fullcount, cpi_base=2010):
     """
     Read & store data from Brown's Longitudinal Tract Database (LTDB).
 
@@ -143,7 +143,8 @@ def read_ltdb(sample, fullcount):
 
         if len(inflate_available):
         # try:
-            df = adjust_inflation(df, inflate_available, year)
+            df = adjust_inflation(df, inflate_available, year,
+                                  base_year = cpi_base)
         # except KeyError:  # half the dfs don't have these variables
         #     pass
         return df
