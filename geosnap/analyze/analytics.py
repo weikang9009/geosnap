@@ -112,7 +112,7 @@ def cluster(
         model_name = method + str(len(gdf.columns[gdf.columns.str.startswith(method)]))
     else:
         model_name = method
-    if not columns:
+    if len(columns) <1:
         raise ValueError("You must provide a subset of columns as input")
 
     times = gdf[time_var].unique()
