@@ -176,11 +176,12 @@ def cluster(
 
     if pooling != "unique":
         if w:
-            d = gdf.copy().reset_index()
+            d = gdf.copy()
+            d[columns] = data[columns]
+            d = d.reset_index()
             dfs = [d[d.year==time] for time in times]
             data, w = pool_dfs(dfs)
-            data = data.set_index([time_var, id_var])
-            data = data[columns]
+            data = data.set_index([time_var, id_var])[columns]
             w = W(w)
 
         # run the cluster model then join the labels back to the original data
