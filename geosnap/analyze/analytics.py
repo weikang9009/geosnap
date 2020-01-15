@@ -5,11 +5,12 @@ from collections import namedtuple
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-
+from libpysal.weights import W
 from libpysal.weights import attach_islands
 from libpysal.weights.contiguity import Queen, Rook
 from libpysal.weights.distance import KNN
-
+import geopandas as gpd
+import libpysal
 from .._data import _Map
 from .cluster import (
     affinity_propagation,
@@ -30,6 +31,38 @@ ModelResults = namedtuple(
 )
 
 
+def pool_dfs(list_of_dataframes):
+    """Create a space-time dataset with associated weights matrix."""
+    # create a df index
+    dfs = list_of_dataframes
+    n_df = len(dfs)
+
+    for idx, df in enumerate(dfs):
+        df['df_idx'] = idx
+
+    # concatenate the dataframes
+    df = gpd.GeoDataFrame(pd.concat(dfs, ignore_index=True))
+
+    # build the W
+    w = libpysal.weights.Queen.from_dataframe(df)
+
+    # filter out the neighbors
+    neighbors = {}
+    for key in w.neighbors:
+        neighbors[key] = []
+        i = df.iloc[key].df_idx
+        candidates = w.neighbors[key]
+        neigh_df = df.iloc[candidates].df_idx
+        neighs = zip(neigh_df, candidates)
+        for j, neigh in neighs:
+            if abs(i - j) <= 1:
+                neighbors[key].append(neigh)
+
+    # return the new data frame and associated w
+
+    return df, neighbors
+
+
 def cluster(
     gdf,
     n_clusters=6,
@@ -41,6 +74,7 @@ def cluster(
     id_var="geoid",
     scaler='std',
     pooling="fixed",
+    w=False,
     **kwargs,
 ):
     """Create a geodemographic typology by running a cluster analysis on the study area's neighborhood attributes.
@@ -99,12 +133,16 @@ def cluster(
         "gaussian_mixture": gaussian_mixture,
         "spectral": spectral,
         "hdbscan": hdbscan,
+        "spenc": spenc,
+        "ward_spatial": ward_spatial,
+        "skater": skater,
+        "max_p": max_p
     }
     if scaler == "std":
         scaler = StandardScaler()
     if method not in specification.keys():
         raise ValueError(
-            "`method` must of one of ['kmeans', 'ward', 'affinity_propagation', 'spectral', 'gaussian_mixture', 'hdbscan']"
+            f"`method` must of one of {specification.keys()}"
         )
 
     # if we already have a column named after the clustering method, then increment it.
@@ -112,10 +150,11 @@ def cluster(
         model_name = method + str(len(gdf.columns[gdf.columns.str.startswith(method)]))
     else:
         model_name = method
-    if not columns:
+    if len(columns) < 1:
         raise ValueError("You must provide a subset of columns as input")
 
     times = gdf[time_var].unique()
+
     gdf = gdf.set_index([time_var, id_var])
 
     # this is the dataset we'll operate on
@@ -137,6 +176,14 @@ def cluster(
     data = data.fillna(0)
 
     if pooling != "unique":
+        if w:
+            d = gdf.copy()
+            d[columns] = data[columns]
+            d = d.reset_index()
+            dfs = [d[d.year == time] for time in times]
+            data, w = pool_dfs(dfs)
+            data = data.set_index([time_var, id_var])[columns]
+            w = W(w)
 
         # run the cluster model then join the labels back to the original data
         model = specification[method](
@@ -144,6 +191,7 @@ def cluster(
             n_clusters=n_clusters,
             best_model=best_model,
             verbose=verbose,
+            w=w,
             **kwargs,
         )
         labels = model.labels_.astype(str)
@@ -166,7 +214,6 @@ def cluster(
         data = data.reset_index()
 
         for time in times:
-
             df = data[data[time_var] == time]
 
             model = specification[method](
@@ -211,8 +258,9 @@ def cluster_spatial(
     weights_kwargs=None,
     **kwargs,
 ):
-    """Create a *spatial* geodemographic typology by running a cluster
-    analysis on the metro area's neighborhood attributes and including a
+    """Create a *spatial* geodemographic typology.
+
+    Run a cluster analysis on the metro area's neighborhood attributes and include a
     contiguity constraint.
 
     Parameters
