@@ -42,10 +42,11 @@ extensions = [  #'sphinx_gallery.gen_gallery',
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "numpydoc",
-    # 'recommonmark',
+    #'recommonmark',
     #'sphinx.ext.napoleon',
     "matplotlib.sphinxext.plot_directive",
 ]
+
 
 
 # sphinx_gallery_conf = {
@@ -69,7 +70,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "geosnap"
-copyright = "2018, geosnap developers"
+copyright = "2020, geosnap developers"
 author = "geosnap developers"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -164,6 +165,7 @@ html_theme_options = {
         # ("Gallery", "auto_examples/index"),
         ("Installation", "installation"),
         ("API", "api"),
+        ("Data", "data"),
         ("User Guide", "https://spatialucr.github.io/geosnap-guide/", True),
         ("References", "references"),
     ],

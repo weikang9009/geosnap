@@ -3,15 +3,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>geosnap.analyze.transition &#8212; geosnap v0.1.1 Manual</title>
+    <title>geosnap.analyze.transition &#8212; geosnap v0.2.1 Manual</title>
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/pysal-styles.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
     <link rel="shortcut icon" href="../_static/geosnap.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -39,7 +39,7 @@
         </button>
         <a class="navbar-brand" href="../index.html"><span><img src="../_static/geosnap.svg"></span>
           geosnap</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.1.1</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>0.2.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -47,6 +47,7 @@
             
                 <li><a href="../installation.html">Installation</a></li>
                 <li><a href="../api.html">API</a></li>
+                <li><a href="../data.html">Data</a></li>
                 <li><a href="https://spatialucr.github.io/geosnap-guide/">User Guide</a></li>
                 <li><a href="../references.html">References</a></li>
             
@@ -62,7 +63,7 @@
       aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-released-version">Installing released version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-a-released-version">Installing a released version</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../installation.html#installing-development-version">Installing development version</a></li>
 </ul>
 </li>
@@ -75,6 +76,11 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data.html">Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data.html#tabular-data">Tabular Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data.html#geo-data">Geo Data</a></li>
+</ul>
+</li>
 </ul>
 </ul>
 </li>
@@ -127,7 +133,7 @@
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
-<dt><strong>gdf</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.6.1+37.g1d212b2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.0.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></span></dt><dd><p>Long-form geopandas.GeoDataFrame or pandas.DataFrame containing neighborhood
+<dt><strong>gdf</strong><span class="classifier"><a class="reference external" href="https://geopandas.readthedocs.io/en/latest/reference/geopandas.GeoDataFrame.html#geopandas.GeoDataFrame" title="(in GeoPandas v0.7.0+34.g878a770)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">geopandas.GeoDataFrame</span></code></a> or <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.0.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a></span></dt><dd><p>Long-form geopandas.GeoDataFrame or pandas.DataFrame containing neighborhood
 attributes with a column defining neighborhood clusters.</p>
 </dd>
 <dt><strong>cluster_col</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Column name for the neighborhood segmentation, such as
@@ -157,8 +163,8 @@ if w_type is given, a Spatial_Markov instance is returned.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">geosnap</span> <span class="kn">import</span> <span class="n">Community</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">columbus</span> <span class="o">=</span> <span class="n">Community</span><span class="o">.</span><span class="n">from_ltdb</span><span class="p">(</span><span class="n">msa_fips</span><span class="o">=</span><span class="n">columbusfips</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">geosnap</span> <span class="kn">import</span> <span class="n">Community</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">columbus</span> <span class="o">=</span> <span class="n">Community</span><span class="o">.</span><span class="n">from_ltdb</span><span class="p">(</span><span class="n">msa_fips</span><span class="o">=</span><span class="s2">&quot;18140&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">columbus1</span> <span class="o">=</span> <span class="n">columbus</span><span class="o">.</span><span class="n">cluster</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;median_household_income&#39;</span><span class="p">,</span>
 <span class="gp">... </span><span class="s1">&#39;p_poverty_rate&#39;</span><span class="p">,</span> <span class="s1">&#39;p_edu_college_greater&#39;</span><span class="p">,</span> <span class="s1">&#39;p_unemployment_rate&#39;</span><span class="p">],</span>
 <span class="gp">... </span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;ward&#39;</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
@@ -215,8 +221,8 @@ if w_type is given, a Spatial_Markov instance is returned.</p>
       
     </p>
     <p>
-        &copy; Copyright 2018, geosnap developers.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.2.<br/>
+        &copy; Copyright 2020, geosnap developers.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.4.4.<br/>
     </p>
   </div>
 </footer>

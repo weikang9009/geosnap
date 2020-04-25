@@ -20,8 +20,8 @@ if not os.path.exists(data_dir):
 
 # look for local storage and create if missing
 try:
-    from quilt3.data.geosnap_data import storage
-except ImportError:
+    storage = quilt3.Package.browse("geosnap_data/storage")
+except FileNotFoundError:
     storage = quilt3.Package()
 
 
@@ -114,20 +114,22 @@ class DataStore:
 
     def __init__(self):
         """Instantiate a new DataStore object."""
-        try:  # if any of these aren't found, stream them insteead
-            from quilt3.data.census import tracts_cartographic, administrative
-        except ImportError:
+
+        try: # if any of these aren't found, stream them insteead
+            administrative = quilt3.Package.browse("census/administrative")
+            tracts_cartographic = quilt3.Package.browse("census/tracts_cartographic")
+        except FileNotFoundError:
             warn(
                 "Unable to locate local census data. Streaming instead.\n"
                 "If you plan to use census data repeatedly you can store it locally "
-                "with the data.store_census function for better performance"
+                "with the io.store_census function for better performance"
             )
             try:
                 tracts_cartographic = quilt3.Package.browse(
-                    "census/tracts_cartographic", "s3://quilt-cgs"
+                    "census/tracts_cartographic", "s3://spatial-ucr"
                 )
                 administrative = quilt3.Package.browse(
-                    "census/administrative", "s3://quilt-cgs"
+                    "census/administrative", "s3://spatial-ucr"
                 )
 
             except Timeout:
@@ -135,7 +137,7 @@ class DataStore:
                     "Unable to locate local census data and unable to reach s3 bucket."
                     "You will be unable to use built-in data during this session. "
                     "If you need these data, please try downloading a local copy "
-                    "with the data.store_census function, then restart your "
+                    "with the io.store_census function, then restart your "
                     "python kernel and try again."
                 )
         self.tracts_cartographic = tracts_cartographic
@@ -178,24 +180,24 @@ class DataStore:
             stored as well-known binary on the 'wkb' column.
 
         """
-        try:  # if any of these aren't found, stream them insteead
-            from quilt3.data.census import blocks_2000
-        except ImportError:
+        try:
+            blocks_2000 = quilt3.Package.browse("census/blocks_2000") # if any of these aren't found, stream them instead
+        except FileNotFoundError:
             warn(
                 "Unable to locate local census 2000 block data. Streaming instead.\n"
                 "If you plan to use census data repeatedly you can store it locally "
-                "with the data.store_blocks_2000 function for better performance"
+                "with the io.store_blocks_2000 function for better performance"
             )
             try:
                 blocks_2000 = quilt3.Package.browse(
-                    "census/blocks_2000", "s3://quilt-cgs"
+                    "census/blocks_2000", "s3://spatial-ucr"
                 )
 
             except Timeout:
                 warn(
                     "Unable to locate local census data and unable to reach s3 bucket."
                     "You will be unable to use built-in data during this session. "
-                    "Try downloading a local copy with the data.store_blocks_2000 function,"
+                    "Try downloading a local copy with the io.store_blocks_2000 function,"
                     "then restart your python kernel and try again."
                 )
 
@@ -233,17 +235,17 @@ class DataStore:
             stored as well-known binary on the 'wkb' column.
 
         """
-        try:  # if any of these aren't found, stream them insteead
-            from quilt3.data.census import blocks_2010
-        except ImportError:
+        try:
+            blocks_2010 = quilt3.Package.browse("census/blocks_2010")  # if any of these aren't found, stream them instead
+        except FileNotFoundError:
             warn(
                 "Unable to locate local census 2010 block data. Streaming instead.\n"
                 "If you plan to use census data repeatedly you can store it locally "
-                "with the data.store_blocks_2010 function for better performance"
+                "with the io.store_blocks_2010 function for better performance"
             )
             try:
                 blocks_2010 = quilt3.Package.browse(
-                    "census/blocks_2010", "s3://quilt-cgs"
+                    "census/blocks_2010", "s3://spatial-ucr"
                 )
 
             except Timeout:
@@ -251,7 +253,7 @@ class DataStore:
                     "Unable to locate local census data and unable to reach s3 bucket."
                     "You will be unable to use built-in data during this session. "
                     "If you need these data, please try downloading a local copy "
-                    "with the data.store_blocks_2010 function, then restart your "
+                    "with the io.store_blocks_2010 function, then restart your "
                     "python kernel and try again."
                 )
 
